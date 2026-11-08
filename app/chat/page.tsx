@@ -2,6 +2,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
+import { tierLabel } from '@/lib/tiers';
 
 type Channel = { id: string; name: string; tier: string };
 type Msg = { id: number; channel_id: string; user_id: string; body: string; created_at: string };
@@ -61,7 +62,7 @@ export default function Chat() {
     <div className="app">
       <nav className="side" aria-label="Channels">
         <h2>Artists Link</h2>
-        <p className="tier">{tier.toUpperCase()} tier</p>
+        <p className="tier">{tierLabel(tier)} tier</p>
         {channels.map((c) => (
           <button key={c.id} className={c.id === active?.id ? 'ch on' : 'ch'} onClick={() => setActive(c)}># {c.name}</button>
         ))}

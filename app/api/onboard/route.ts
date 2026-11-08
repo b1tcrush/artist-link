@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { tierFor, GENRES, TOS_VERSION } from '@/lib/tiers';
-import { proofCode, allowedProofUrl, fetchProofText, pageProvesClaim, PROOF_HOSTS_LABEL } from '@/lib/verify';
+import { proofCode, allowedProofUrl, fetchProofText, pageProvesClaim, normalize, PROOF_HOSTS_LABEL } from '@/lib/verify';
 
 // Server-only: the service role key never reaches the browser.
 const admin = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!, {
@@ -36,25 +36,26 @@ export async function POST(req: Request) {
     method: 'artist.getinfo', artist: name, autocorrect: '0',
     api_key: process.env.LASTFM_API_KEY!, format: 'json',
   }).toString();
-  let lf: { artist?: { name?: string; url?: string; stats?: { listeners?: string } } };
+  let lf: { error?: number; artist?: { name?: string; url?: string; stats?: { listeners?: string } } } | null;
   try {
     const r = await fetch(url, { cache: 'no-store', signal: AbortSignal.timeout(8000) });
-    if (!r.ok) return fail('Last.fm is unavailable. Try again in a minute.', 502);
-    lf = await r.json();
+    lf = await r.json().catch(() => null); // Last.fm sends JSON errors, sometimes with a non-200 status
   } catch {
     return fail('Could not reach Last.fm. Try again in a minute.', 502);
   }
-  const listeners = Number(lf?.artist?.stats?.listeners);
-  const lastfmUrl = String(lf?.artist?.url ?? '');
-  if (!Number.isFinite(listeners) || !lastfmUrl)
-    return fail('Artist not found on Last.fm. Check the spelling.', 404);
+  // Error 6 = artist not found. Very small artists are often missing from Last.fm,
+  // so they join the Under 100 tier (still verified with a code in a public bio).
+  const notOnLastfm = lf?.error === 6;
+  if (!notOnLastfm && !lf?.artist) return fail('Last.fm is unavailable. Try again in a minute.', 502);
+  const listeners = notOnLastfm ? 0 : Number(lf?.artist?.stats?.listeners);
+  if (!Number.isFinite(listeners)) return fail('Last.fm is unavailable. Try again in a minute.', 502);
+  const lastfmUrl = notOnLastfm ? null : String(lf?.artist?.url ?? '') || null;
 
   const tier = tierFor(listeners);
-  if (!tier) return fail('Artists Link opens at 100 Last.fm listeners.', 403);
 
   // Use Last.fm's spelling so the stored name is canonical.
-  const canonicalName = String(lf.artist?.name ?? name).slice(0, 60);
-  const code = proofCode(user.id, lastfmUrl);
+  const canonicalName = (notOnLastfm ? name : String(lf?.artist?.name ?? name)).slice(0, 60);
+  const code = proofCode(user.id, lastfmUrl ?? `name:${normalize(canonicalName)}`);
 
   // 5a. Step one: no proof yet. Hand back the code to put in a public bio.
   if (!proofUrl) return NextResponse.json({ step: 'verify', code, artistName: canonicalName });

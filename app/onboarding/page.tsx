@@ -1,5 +1,6 @@
 'use client';
 import { useEffect, useState } from 'react';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 import { GENRES } from '@/lib/tiers';
@@ -63,6 +64,7 @@ export default function Onboarding() {
         )}
         {err && <p className="err" role="alert">{err}</p>}
       </form>
+      <p>Can&apos;t verify, or ended up in the wrong tier? <Link href="/apply">Apply for manual review</Link></p>
     </main>
   );
 }

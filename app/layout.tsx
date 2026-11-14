@@ -2,6 +2,7 @@ import './globals.css';
 import Footer from '@/components/Footer';
 
 export const metadata = { title: 'Artists Link', description: 'Tier-locked messaging for underground rap artists.' };
+export const viewport = { themeColor: '#070817', colorScheme: 'dark' as const };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (

@@ -15,8 +15,23 @@ export default function Onboarding() {
   const [proofUrl, setProofUrl] = useState('');
   const [err, setErr] = useState('');
   const [busy, setBusy] = useState(false);
+  const [ready, setReady] = useState(false);
 
-  useEffect(() => { if (!sessionStorage.getItem('al_consent')) router.replace('/'); }, [router]);
+  // Existing members go straight to the chat. No session goes back to the start.
+  // New members need the consent they gave on the first page.
+  useEffect(() => {
+    let live = true;
+    (async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) { router.replace('/'); return; }
+      const { data: me } = await supabase.from('profiles').select('id').eq('id', session.user.id).maybeSingle();
+      if (!live) return;
+      if (me) { router.replace('/chat'); return; }
+      if (!sessionStorage.getItem('al_consent')) { router.replace('/'); return; }
+      setReady(true);
+    })();
+    return () => { live = false; };
+  }, [router]);
 
   async function send(extra: Record<string, string>) {
     const { data: { session } } = await supabase.auth.getSession();
@@ -42,6 +57,15 @@ export default function Onboarding() {
     } finally {
       setBusy(false);
     }
+  }
+
+  if (!ready) {
+    return (
+      <main className="gate">
+        <h1>Find your tier</h1>
+        <p className="lede">Checking your account…</p>
+      </main>
+    );
   }
 
   return (

@@ -1,0 +1,20 @@
+/* Profile pages. Colors fall back to the Midnight / Electric Violet values if a variable is missing. */
+main.card{width:min(560px,92vw)}
+.name{font:800 clamp(1.8rem,6vw,2.6rem)/1.05 var(--d,system-ui,sans-serif);letter-spacing:-.02em;margin:0;overflow-wrap:anywhere;color:var(--ink,#eef0ff)}
+.meta{display:flex;flex-wrap:wrap;gap:.5rem;align-items:center}
+.pill{background:#8b3dff22;color:var(--violet-hi,#b38cff);border:1px solid #8b3dff55;border-radius:999px;padding:.15rem .75rem;font-size:13px;font-weight:600}
+.muted{color:var(--mute,#9ba2d4)}
+.bio{white-space:pre-wrap;overflow-wrap:anywhere;margin:0}
+.h2{font:800 1.05rem var(--d,system-ui,sans-serif);margin:0}
+.contacts{list-style:none;margin:0;padding:0;display:grid;gap:.5rem}
+.contacts li{display:flex;justify-content:space-between;gap:1rem;align-items:baseline;border:1px solid var(--line,#242a5e);border-radius:10px;padding:.55rem .8rem;background:#0b0d24aa}
+.contacts li>span{color:var(--mute,#9ba2d4);font-size:14px;flex:none}
+.contacts a,.contacts code{overflow-wrap:anywhere;text-align:right}
+.note{color:var(--mute,#9ba2d4);font-size:13px;margin:0}
+.actions{display:flex;flex-wrap:wrap;gap:.6rem;align-items:center}
+.btn{display:inline-block;text-decoration:none;background:var(--violet,#8b3dff);color:#fff;border-radius:8px;padding:.65rem 1rem;font-weight:600;font-size:15px}
+.btn:hover{background:var(--violet-dk,#7226e0);color:#fff}
+.ok{color:#7ee2a8;margin:0}
+.fieldErr{color:var(--err,#ff7a9c);font-size:13px}
+.count{text-align:right;font-size:12px;color:var(--mute,#9ba2d4)}
+.report{display:grid;gap:.8rem;border:1px solid var(--line,#242a5e);border-radius:12px;padding:1rem;background:#0b0d24aa}

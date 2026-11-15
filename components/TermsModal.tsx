@@ -15,8 +15,9 @@ export default function TermsModal({ onAccept, onClose }: { onAccept: () => void
           <p><b>2. No liability for collaborations.</b> We disclaim all liability for financial agreements, payments, scams, copyright or ownership disputes, and misconduct that happens in user-to-user dealings. Verify who you work with and put deals in writing.</p>
           <p><b>3. Copyright.</b> Only share music, loops, and lyrics you have the right to share. Send infringement notices through the “Report Copyright / DMCA” link. We remove infringing material and may terminate repeat infringers.</p>
           <p><b>4. Age.</b> You must be at least 13 years old to use Artists Link.</p>
-          <p><b>5. Data.</b> We store your sign-in identifier, artist name, sub-genre, tier, and messages. We do not collect phone numbers, addresses, or payment details.</p>
+          <p><b>5. Data.</b> We store your sign-in identifier, artist name, sub-genre, tier, and messages. If you choose to add a bio or social handles to your profile, we store those too. We do not ask for phone numbers, addresses, or payment details.</p>
           <p><b>6. Tiers.</b> Access is based on public Last.fm listener counts. We may change your tier or remove access if the data is inaccurate or misused.</p>
+          <p><b>7. Profiles and contact info.</b> A bio and social handles on your profile are optional. Anyone signed in to your tier can see what you add, and you can change or remove it at any time. Do not share a phone number, home address, school, or anything else you would not want strangers to have. We are not responsible for how other users use information you choose to share. You can report a profile with the Report button.</p>
         </div>
         <div className="row">
           <button className="ghost" onClick={onClose}>Cancel</button>

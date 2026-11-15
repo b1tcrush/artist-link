@@ -1,5 +1,5 @@
 export type Tier = 'u100' | '1k' | '10k' | '100k';
-export const TOS_VERSION = '2026-11-03';
+export const TOS_VERSION = '2026-11-14';
 export const GENRES = ['Plugg', 'Pluggnb', 'Rage', 'Trap', 'Drill', 'Jerk', 'Boom Bap', 'Cloud Rap', 'Other'];
 
 // Bands (adjust to taste): Under 100 = 0-99 (including artists Last.fm doesn't know)

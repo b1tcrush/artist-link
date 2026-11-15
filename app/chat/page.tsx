@@ -1,5 +1,6 @@
 'use client';
 import { useEffect, useRef, useState } from 'react';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 import { tierLabel } from '@/lib/tiers';
@@ -15,6 +16,7 @@ export default function Chat() {
   const [names, setNames] = useState<Record<string, string>>({});
   const [text, setText] = useState('');
   const [tier, setTier] = useState('');
+  const [myId, setMyId] = useState('');
   const endRef = useRef<HTMLDivElement>(null);
 
   // Load profile + channels. RLS means we only ever get our own tier's rows.
@@ -25,6 +27,7 @@ export default function Chat() {
       const { data: me } = await supabase.from('profiles').select('tier').eq('id', user.id).maybeSingle();
       if (!me) return router.replace('/onboarding');
       setTier(me.tier);
+      setMyId(user.id);
       const { data: ch } = await supabase.from('channels').select('*').order('name');
       setChannels(ch ?? []); setActive(ch?.[0] ?? null);
       const { data: ps } = await supabase.from('profiles').select('id, artist_name');
@@ -66,6 +69,7 @@ export default function Chat() {
         {channels.map((c) => (
           <button key={c.id} className={c.id === active?.id ? 'ch on' : 'ch'} onClick={() => setActive(c)}># {c.name}</button>
         ))}
+        <button className="ghost" disabled={!myId} onClick={() => router.push(`/profile?id=${myId}`)}>Your profile</button>
         <button className="ghost out" onClick={() => supabase.auth.signOut().then(() => router.replace('/'))}>Sign out</button>
       </nav>
       <section className="room">
@@ -74,7 +78,7 @@ export default function Chat() {
           {msgs.length === 0 && <p className="empty">Nothing here yet. Say something first.</p>}
           {msgs.map((m) => (
             <article key={m.id}>
-              <b>{names[m.user_id] ?? 'Artist'}</b>
+              <Link href={`/profile?id=${m.user_id}`} style={{ textDecoration: 'none' }} title="View profile"><b>{names[m.user_id] ?? 'Artist'}</b></Link>
               <time>{new Date(m.created_at).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })}</time>
               <p>{m.body}</p> {/* React escapes text: no raw HTML, no XSS */}
             </article>
